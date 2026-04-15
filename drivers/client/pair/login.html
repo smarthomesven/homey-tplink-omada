@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .error {
+        color: red;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <fieldset class="homey-form-fieldset">
+      <legend class="homey-form-legend">TP-Link Omada</legend>
+      <br>
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="ip" data-i18n="pair.ip">IP address</label>
+        <input class="homey-form-input" id="ip" type="text" value="" />
+      </div>
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="email" data-i18n="pair.email">Email address</label>
+        <input class="homey-form-input" id="email" type="text" value="" />
+      </div>
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="password" data-i18n="pair.password">Password</label>
+        <input class="homey-form-input" id="password" type="password" value="" />
+      </div>
+    </fieldset>
+    <p id="failed" class="error" data-i18n="pair.failed">Invalid credentials</p>
+    <p id="error" class="error" data-i18n="pair.error">Something went wrong</p>
+
+    <button id="save" class="homey-button-primary-full" data-i18n="pair.save">Save</button>
+    <script type="text/javascript">
+      const emailElement = document.getElementById('email');
+      const passwordElement = document.getElementById('password');
+      const ipElement = document.getElementById('ip');
+      const failedElement = document.getElementById('failed');
+      const errorElement = document.getElementById('error');
+      const saveElement = document.getElementById('save');
+      failedElement.style.display = 'none';
+      errorElement.style.display = 'none';
+        saveElement.addEventListener("click", function (e) {
+          setSaving();
+          const email = emailElement.value;
+          const password = passwordElement.value;
+          const ip = ipElement.value;
+          if (!email || !password || !ip) {
+            failedElement.style.display = 'block';
+            setSave();
+            return;
+          }
+          Homey.emit("login", { ip: ip, email: email, password: password  }).then(function (result) {
+            if (result.success === false) {
+              if (result.error === "INVALID_CREDENTIALS") {
+                failedElement.style.display = 'block';
+                setSave();
+              } else if (result.error === "ERROR") {
+                errorElement.style.display = 'block';
+                setSave();
+              }
+            }
+          });
+        });
+        function setSave() {
+          saveElement.className = 'homey-button-primary-full';
+          saveElement.textContent = Homey.__('pair.save');
+          ipElement.disabled = false;
+          emailElement.disabled = false;
+          passwordElement.disabled = false;
+        }
+
+        function setSaving() {
+          saveElement.className = 'homey-button-primary-full is-loading';
+          saveElement.textContent = Homey.__('pair.saving');
+          ipElement.disabled = true;
+          emailElement.disabled = true;
+          passwordElement.disabled = true;
+        }
+    </script>
+  </body>
+</html>

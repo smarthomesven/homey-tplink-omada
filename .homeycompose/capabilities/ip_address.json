@@ -1,0 +1,11 @@
+{
+  "type": "string",
+  "title": {
+    "en": "IP address",
+    "nl": "IP-adres"
+  },
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "icon": "/assets/ip.svg"
+}
