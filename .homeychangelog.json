@@ -16,5 +16,8 @@
   },
   "1.0.5": {
     "en": "Fixed signal strength"
+  },
+  "1.0.6": {
+    "en": "Added reconnect button"
   }
 }
