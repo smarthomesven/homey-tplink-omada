@@ -118,6 +118,7 @@ module.exports = class ClientDriver extends Homey.Driver {
                     data: {
                       mac: client.mac,
                       siteId: client.siteId,
+                      wireless: client.wireless,
                     },
                   });
                 }
