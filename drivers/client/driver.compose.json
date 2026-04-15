@@ -5,7 +5,8 @@
   "class": "other",
   "capabilities": [
     "alarm_disconnected",
-    "ip_address"
+    "ip_address",
+    "measure_signal_strength"
   ],
   "platforms": [
     "local"
