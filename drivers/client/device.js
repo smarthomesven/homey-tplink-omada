@@ -31,6 +31,11 @@ module.exports = class ClientDevice extends Homey.Device {
       this.log('Reconnect capability triggered, requesting client data refresh');
       await this.homey.app.reconnectClient(this);
     });
+    const reconnectFlowCard = this.homey.flow.getActionCard('reconnect');
+    reconnectFlowCard.registerRunListener(async (args, state) => {
+      this.log('Reconnect flow card triggered for client', this.getData().mac);
+      await this.homey.app.reconnectClient(this);
+    });
     this._wireless = this.getStoreValue('wireless');
     this.homey.app.registerDevice(this.getData().mac, this);
   }

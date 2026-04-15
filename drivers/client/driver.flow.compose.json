@@ -24,11 +24,20 @@
   ],
   "conditions": [
     {
-        "id": "is_device_connected",
-        "title": {
-          "en": "Client is !{{connected|disconnected}}",
-          "nl": "Client is !{{verbonden|niet verbonden}}"
-        }
+      "id": "is_device_connected",
+      "title": {
+        "en": "Client is !{{connected|disconnected}}",
+        "nl": "Client is !{{verbonden|niet verbonden}}"
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "reconnect",
+      "title": {
+        "en": "Reconnect",
+        "nl": "Opnieuw verbinden"
+      }
     }
   ]
 }

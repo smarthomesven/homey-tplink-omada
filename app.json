@@ -93,6 +93,22 @@
           }
         ]
       }
+    ],
+    "actions": [
+      {
+        "id": "reconnect",
+        "title": {
+          "en": "Reconnect",
+          "nl": "Opnieuw verbinden"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=client"
+          }
+        ]
+      }
     ]
   },
   "drivers": [
