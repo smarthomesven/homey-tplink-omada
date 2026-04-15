@@ -38,6 +38,20 @@
         "en": "Reconnect",
         "nl": "Opnieuw verbinden"
       }
+    },
+    {
+      "id": "block",
+      "title": {
+        "en": "Block",
+        "nl": "Blokkeren"
+      }
+    },
+    {
+      "id": "unblock",
+      "title": {
+        "en": "Unblock",
+        "nl": "Deblokkeren"
+      }
     }
   ]
 }

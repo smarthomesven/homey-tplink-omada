@@ -42,6 +42,23 @@ module.exports = class OmadaApp extends Homey.App {
     await this._startPolling();
   }
 
+  async toggleBlockClient(siteId, mac, block) {
+    if (!this._client || !this._csrfToken || !this._cid) {
+      this.log('Cannot block/unblock client, session not initialized');
+      return;
+    }
+    try {
+      await this._client.post(
+        `/${this._cid}/api/v2/sites/${siteId}/cmd/clients/${mac}/${block ? 'block' : 'unblock'}`,
+        {},
+        { headers: { 'Csrf-Token': this._csrfToken } }
+      );
+      this.log(`Client ${mac} has been ${block ? 'blocked' : 'unblocked'}`);
+    } catch (err) {
+      this.error(`Failed to ${block ? 'block' : 'unblock'} client ${mac}:`, err.message);
+    }
+  }
+
   async reconnectClient(device) {
     if (!this._client || !this._csrfToken || !this._cid) {
       this.log('Cannot reconnect client, session not initialized');

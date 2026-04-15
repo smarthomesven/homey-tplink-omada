@@ -108,6 +108,34 @@
             "filter": "driver_id=client"
           }
         ]
+      },
+      {
+        "id": "block",
+        "title": {
+          "en": "Block",
+          "nl": "Blokkeren"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=client"
+          }
+        ]
+      },
+      {
+        "id": "unblock",
+        "title": {
+          "en": "Unblock",
+          "nl": "Deblokkeren"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=client"
+          }
+        ]
       }
     ]
   },
@@ -167,6 +195,18 @@
       "setable": false,
       "uiComponent": "sensor",
       "icon": "/assets/disconnected.svg"
+    },
+    "block": {
+      "type": "boolean",
+      "title": {
+        "en": "Block",
+        "nl": "Blokkeren"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "button",
+      "uiQuickAction": false,
+      "icon": "/assets/block.svg"
     },
     "ip_address": {
       "type": "string",

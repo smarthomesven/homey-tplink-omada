@@ -27,14 +27,53 @@ module.exports = class ClientDevice extends Homey.Device {
       this.log('Adding missing capability: reconnect');
       await this.addCapability('reconnect');
     }
+    if (!this.hasCapability('block')) {
+      this.log('Adding missing capability: block');
+      await this.addCapability('block');
+    }
     this.registerCapabilityListener('reconnect', async (value) => {
       this.log('Reconnect capability triggered, requesting client data refresh');
       await this.homey.app.reconnectClient(this);
     });
+    this.registerCapabilityListener('block', async (value) => {
+      this.log('Block capability triggered, requesting client block/unblock');
+      const siteId = this.getData().siteId;
+      const mac = this.getData().mac;
+      try {
+        await this.homey.app.toggleBlockClient(siteId, mac, value);
+        this.log(`Client ${mac} has been ${value ? 'blocked' : 'unblocked'}`);
+      } catch (err) {
+        this.error(`Failed to ${value ? 'block' : 'unblock'} client ${mac}:`, err.message);
+      }
+    });
     const reconnectFlowCard = this.homey.flow.getActionCard('reconnect');
+    const blockFlowCard = this.homey.flow.getActionCard('block');
+    const unblockFlowCard = this.homey.flow.getActionCard('unblock');
     reconnectFlowCard.registerRunListener(async (args, state) => {
       this.log('Reconnect flow card triggered for client', this.getData().mac);
       await this.homey.app.reconnectClient(this);
+    });
+    blockFlowCard.registerRunListener(async (args, state) => {
+      this.log('Block flow card triggered for client', this.getData().mac);
+      const siteId = this.getData().siteId;
+      const mac = this.getData().mac;
+      try {
+        await this.homey.app.toggleBlockClient(siteId, mac, true);
+        this.log(`Client ${mac} has been blocked via flow`);
+      } catch (err) {
+        this.error(`Failed to block client ${mac} via flow:`, err.message);
+      }
+    });
+    unblockFlowCard.registerRunListener(async (args, state) => {
+      this.log('Unblock flow card triggered for client', this.getData().mac);
+      const siteId = this.getData().siteId;
+      const mac = this.getData().mac;
+      try {
+        await this.homey.app.toggleBlockClient(siteId, mac, false);
+        this.log(`Client ${mac} has been unblocked via flow`);
+      } catch (err) {
+        this.error(`Failed to unblock client ${mac} via flow:`, err.message);
+      }
     });
     this._wireless = this.getStoreValue('wireless');
     this.homey.app.registerDevice(this.getData().mac, this);
@@ -48,6 +87,7 @@ module.exports = class ClientDevice extends Homey.Device {
   onClientData(client) {
     const connected = client !== null;
     this.setCapabilityValue('alarm_disconnected', !connected).catch(this.error);
+    if (connected) this.setCapabilityValue('block', false);
 
     if (connected && client.ip) {
       this.setCapabilityValue('ip_address', client.ip).catch(this.error);
