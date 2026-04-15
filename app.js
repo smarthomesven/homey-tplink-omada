@@ -3,7 +3,7 @@
 const Homey = require('homey');
 const axios = require('axios');
 const https = require('https');
-const POLL_INTERVAL_MS = 15000;
+const POLL_INTERVAL_MS = 10000;
 
 
 module.exports = class OmadaApp extends Homey.App {
@@ -40,6 +40,24 @@ module.exports = class OmadaApp extends Homey.App {
     this._pollTimer = null;
 
     await this._startPolling();
+  }
+
+  async reconnectClient(device) {
+    if (!this._client || !this._csrfToken || !this._cid) {
+      this.log('Cannot reconnect client, session not initialized');
+      return;
+    }
+    const siteId = device.getData().siteId;
+    const mac = device.getData().mac;
+    try {
+      await this._client.post(
+        `/${this._cid}/api/v2/sites/${siteId}/cmd/clients/${mac}/reconnect`, {},
+        { headers: { 'Csrf-Token': this._csrfToken } }
+      );
+      this.log(`Reconnect request sent for client ${mac}`);
+    } catch (err) {
+      this.error(`Failed to reconnect client ${mac}:`, err.message);
+    }
   }
 
   registerDevice(mac, device) {

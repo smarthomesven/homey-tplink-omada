@@ -104,7 +104,8 @@
       "capabilities": [
         "alarm_disconnected",
         "ip_address",
-        "measure_signal_strength"
+        "measure_signal_strength",
+        "reconnect"
       ],
       "platforms": [
         "local"
@@ -161,6 +162,18 @@
       "getable": true,
       "setable": false,
       "icon": "/assets/ip.svg"
+    },
+    "reconnect": {
+      "type": "boolean",
+      "title": {
+        "en": "Reconnect",
+        "nl": "Opnieuw verbinden"
+      },
+      "getable": false,
+      "setable": true,
+      "uiComponent": "button",
+      "uiQuickAction": false,
+      "icon": "/assets/reconnect.svg"
     }
   }
 }

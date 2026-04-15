@@ -6,7 +6,8 @@
   "capabilities": [
     "alarm_disconnected",
     "ip_address",
-    "measure_signal_strength"
+    "measure_signal_strength",
+    "reconnect"
   ],
   "platforms": [
     "local"

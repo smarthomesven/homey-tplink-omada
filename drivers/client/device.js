@@ -23,6 +23,14 @@ module.exports = class ClientDevice extends Homey.Device {
         await this.addCapability('measure_signal_strength');
       }
     }
+    if (!this.hasCapability('reconnect')) {
+      this.log('Adding missing capability: reconnect');
+      await this.addCapability('reconnect');
+    }
+    this.registerCapabilityListener('reconnect', async (value) => {
+      this.log('Reconnect capability triggered, requesting client data refresh');
+      await this.homey.app.reconnectClient(this);
+    });
     this._wireless = this.getStoreValue('wireless');
     this.homey.app.registerDevice(this.getData().mac, this);
   }
