@@ -22,5 +22,8 @@
   },
   "1.0.7": {
     "en": "Added reconnect Flowcard"
+  },
+  "1.0.8": {
+    "en": "Added Block button"
   }
 }
