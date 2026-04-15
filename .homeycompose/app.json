@@ -16,6 +16,11 @@
   "category": [
     "internet"
   ],
+  "source": "https://github.com/smarthomesven/homey-tplink-omada",
+  "bugs": {
+    "url": "https://github.com/smarthomesven/homey-tplink-omada/issues"
+  },
+  "homeyCommunityTopicId": 153824,
   "permissions": [],
   "images": {
     "small": "/assets/images/small.png",

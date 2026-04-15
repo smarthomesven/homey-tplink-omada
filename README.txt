@@ -1,1 +1,2 @@
-Networks Empower Business
+TP-Link's Omada is a budget-friendly yet powerful professional networking solution trusted by businesses worldwide.
+Connect your TP-Link Omada setup to Homey and use the online status and IP address of connected clients in your Flows.
