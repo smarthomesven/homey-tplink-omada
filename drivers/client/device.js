@@ -17,6 +17,11 @@ module.exports = class ClientDevice extends Homey.Device {
         this.log('Adding missing capability: measure_signal_strength');
         await this.removeCapability('measure_signal_strength');
       }
+    } else {
+      if (this.getStoreValue('wireless') === true) {
+        this.log('Adding missing capability: measure_signal_strength');
+        await this.addCapability('measure_signal_strength');
+      }
     }
     this._wireless = this.getStoreValue('wireless');
     this.homey.app.registerDevice(this.getData().mac, this);
