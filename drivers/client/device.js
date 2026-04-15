@@ -12,10 +12,10 @@ module.exports = class ClientDevice extends Homey.Device {
     if (this.getStoreValue('wireless') === undefined) {
       this.setStoreValue('wireless', true);
     }
-    if (!this.hasCapability('measure_signal_strength')) {
-      if (this.getStoreValue('wireless')) {
+    if (this.hasCapability('measure_signal_strength')) {
+      if (this.getStoreValue('wireless') === false) {
         this.log('Adding missing capability: measure_signal_strength');
-        await this.addCapability('measure_signal_strength');
+        await this.removeCapability('measure_signal_strength');
       }
     }
     this._wireless = this.getStoreValue('wireless');
