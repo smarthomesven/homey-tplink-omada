@@ -1,1 +1,11 @@
-{}
+{
+    "pair": {
+        "save": "Save",
+        "saving": "Saving",
+        "failed": "Invalid credentials",
+        "error": "Something went wrong, please try again.",
+        "password": "Password",
+        "email": "Email address",
+        "ip": "IP address"
+    }
+}
