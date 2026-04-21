@@ -126,6 +126,10 @@ module.exports = class ClientDriver extends Homey.Driver {
                 }
               } else {
                 this.log(`Failed to retrieve clients for site ${site.name}.`);
+                this.log('Status code:', clientsResponse.status);
+                if (clientsResponse.data) {
+                  this.log('Response data:', clientsResponse.data);
+                }
                 continue;
               }
             }
