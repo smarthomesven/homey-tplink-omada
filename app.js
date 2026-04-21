@@ -100,12 +100,16 @@ module.exports = class OmadaApp extends Homey.App {
     const ip = this.homey.settings.get('ip');
     const email = this.homey.settings.get('email');
     const password = this.homey.settings.get('password');
+    if (!this.homey.settings.get('port')) {
+      this.homey.settings.set('port', 8043);
+    }
+    const port = this.homey.settings.get('port') || 8043;
 
     if (!ip || !email || !password) return false;
 
     try {
       this._client = axios.create({
-        baseURL: `https://${ip}:8043`,
+        baseURL: `https://${ip}:${port}`,
         httpsAgent: new https.Agent({ rejectUnauthorized: false }),
         maxRedirects: 0,
       });

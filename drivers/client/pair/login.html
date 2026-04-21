@@ -10,11 +10,15 @@
   </head>
   <body>
     <fieldset class="homey-form-fieldset">
-      <legend class="homey-form-legend">TP-Link Omada</legend>
+      <legend class="homey-form-legend">TP-Link Omada Controller</legend>
       <br>
       <div class="homey-form-group">
         <label class="homey-form-label" for="ip" data-i18n="pair.ip">IP address</label>
         <input class="homey-form-input" id="ip" type="text" value="" />
+      </div>
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="port" data-i18n="pair.port">Port number</label>
+        <input class="homey-form-input" id="port" type="number" value="8043" />
       </div>
       <div class="homey-form-group">
         <label class="homey-form-label" for="email" data-i18n="pair.email">Email address</label>
@@ -33,6 +37,7 @@
       const emailElement = document.getElementById('email');
       const passwordElement = document.getElementById('password');
       const ipElement = document.getElementById('ip');
+      const portElement = document.getElementById('port');
       const failedElement = document.getElementById('failed');
       const errorElement = document.getElementById('error');
       const saveElement = document.getElementById('save');
@@ -43,12 +48,16 @@
           const email = emailElement.value;
           const password = passwordElement.value;
           const ip = ipElement.value;
+          const port = portElement.value;
           if (!email || !password || !ip) {
             failedElement.style.display = 'block';
             setSave();
             return;
           }
-          Homey.emit("login", { ip: ip, email: email, password: password  }).then(function (result) {
+          if (!port || port < 1 || port > 65535) {
+            port = 8043;
+          }
+          Homey.emit("login", { ip: ip, port: port, email: email, password: password  }).then(function (result) {
             if (result.success === false) {
               if (result.error === "INVALID_CREDENTIALS") {
                 failedElement.style.display = 'block';

@@ -20,11 +20,12 @@ module.exports = class ClientDriver extends Homey.Driver {
         const ip = data.ip;
         const email = data.email;
         const password = data.password;
-        if (!ip || !email || !password) {
+        const port = data.port || 8043;
+        if (!ip || !email || !password || !port) {
           return { success: false, error: "INVALID_CREDENTIALS" };
         }
         this._client = axios.create({
-          baseURL: `https://${ip}:8043`,
+          baseURL: `https://${ip}:${port}`,
           withCredentials: true,
           httpsAgent: new https.Agent({ rejectUnauthorized: false }),
         });
@@ -65,6 +66,7 @@ module.exports = class ClientDriver extends Homey.Driver {
         }
         this._csrfToken = tokenResponse.data.result.token;
         this.homey.settings.set('ip', ip);
+        this.homey.settings.set('port', port);
         this.homey.settings.set('email', email);
         this.homey.settings.set('password', password);
         this.homey.settings.set('loggedIn', true);
