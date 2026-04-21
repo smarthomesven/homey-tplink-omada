@@ -159,10 +159,22 @@ module.exports = class OmadaApp extends Homey.App {
       const clientMap = new Map(); // mac -> client object (or absent = disconnected)
 
       for (const siteId of siteIds) {
-        const res = await this._client.get(
-          `/${this._cid}/api/v2/sites/${siteId}/clients?currentPage=1&currentPageSize=1000&filters.active=true`,
-          { headers: { 'Csrf-Token': this._csrfToken } }
-        );
+        const res = await this._client.post(`/openapi/v2/${this._cid}/sites/${siteId}/clients`, {
+          page: 1,
+          pageSize: 500,
+          scope: 1,
+          sorts: {},
+          hideHealthUnsupported: true,
+          filters: {
+            active: true,
+          },
+        }, {
+          headers: {
+            'Csrf-Token': this._csrfToken,
+            'Omada-Request-Source': 'web-local',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        });
 
         if (res.status === 200 && Array.isArray(res.data?.result?.data)) {
           for (const client of res.data.result.data) {

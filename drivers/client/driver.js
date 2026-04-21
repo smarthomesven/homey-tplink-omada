@@ -107,9 +107,20 @@ module.exports = class ClientDriver extends Homey.Driver {
           });
           if (response.status === 200 && response.data.result && Array.isArray(response.data.result.data)) {
             for (const site of response.data.result.data) {
-              const clientsResponse = await this._client.get(`/${this._cid}/api/v2/sites/${site.id}/clients?currentPage=1&currentPageSize=100&filters.active=true`, {
+              const clientsResponse = await this._client.post(`/openapi/v2/${this._cid}/sites/${site.id}/clients`, {
+                page: 1,
+                pageSize: 500,
+                scope: 1,
+                sorts: {},
+                hideHealthUnsupported: true,
+                filters: {
+                  active: true,
+                },
+              }, {
                 headers: {
                   'Csrf-Token': this._csrfToken,
+                  'Omada-Request-Source': 'web-local',
+                  'X-Requested-With': 'XMLHttpRequest',
                 },
               });
               if (clientsResponse.status === 200 && clientsResponse.data.result && Array.isArray(clientsResponse.data.result.data)) {
@@ -119,7 +130,7 @@ module.exports = class ClientDriver extends Homey.Driver {
                     name: `${client.name} (${client.mac})`,
                     data: {
                       mac: client.mac,
-                      siteId: client.siteId,
+                      siteId: site.id,
                       wireless: client.wireless,
                     },
                   });
