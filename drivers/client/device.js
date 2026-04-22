@@ -9,6 +9,10 @@ module.exports = class ClientDevice extends Homey.Device {
    */
   async onInit() {
     this.log('Client device has been initialized');
+    const wireless = this.getData().wireless;
+    if (wireless !== undefined) {
+      this.setStoreValue('wireless', wireless);
+    }
     if (this.getStoreValue('wireless') === undefined) {
       this.setStoreValue('wireless', true);
     }
