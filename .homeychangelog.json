@@ -43,5 +43,8 @@
   },
   "1.0.14": {
     "en": "Fixed Flow cards and removed reconnect capability and Flow card from wired clients (reconnect is only available for wireless clients)"
+  },
+  "1.0.15": {
+    "en": "Fixed wireless type detection"
   }
 }
