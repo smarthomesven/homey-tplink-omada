@@ -11,6 +11,38 @@ module.exports = class ClientDriver extends Homey.Driver {
    */
   async onInit() {
     this.log('ClientDriver has been initialized');
+    const reconnectFlowCard = this.homey.flow.getActionCard('reconnect');
+    const blockFlowCard = this.homey.flow.getActionCard('block');
+    const unblockFlowCard = this.homey.flow.getActionCard('unblock');
+    reconnectFlowCard.registerRunListener(async (args, state) => {
+      const device = args.device;
+      this.log('Reconnect flow card triggered for client', device.getData().mac);
+      await this.homey.app.reconnectClient(device);
+    });
+    blockFlowCard.registerRunListener(async (args, state) => {
+      const device = args.device;
+      this.log('Block flow card triggered for client', device.getData().mac);
+      const siteId = device.getData().siteId;
+      const mac = device.getData().mac;
+      try {
+        await this.homey.app.toggleBlockClient(siteId, mac, true);
+        this.log(`Client ${mac} has been blocked via flow`);
+      } catch (err) {
+        this.error(`Failed to block client ${mac} via flow:`, err.message);
+      }
+    });
+    unblockFlowCard.registerRunListener(async (args, state) => {
+      const device = args.device;
+      this.log('Unblock flow card triggered for client', device.getData().mac);
+      const siteId = device.getData().siteId;
+      const mac = device.getData().mac;
+      try {
+        await this.homey.app.toggleBlockClient(siteId, mac, false);
+        this.log(`Client ${mac} has been unblocked via flow`);
+      } catch (err) {
+        this.error(`Failed to unblock client ${mac} via flow:`, err.message);
+      }
+    });
   }
 
   async onPair(session) {

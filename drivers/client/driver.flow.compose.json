@@ -37,7 +37,8 @@
       "title": {
         "en": "Reconnect",
         "nl": "Opnieuw verbinden"
-      }
+      },
+      "$filter": "capabilities=reconnect"
     },
     {
       "id": "block",
