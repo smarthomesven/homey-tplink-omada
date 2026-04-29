@@ -33,6 +33,16 @@
     "email": "sven@dypodex.com"
   },
   "brandColor": "#0A5A5A",
+  "api": {
+    "getDebugData": {
+      "method": "GET",
+      "path": "/links-data"
+    },
+    "send": {
+      "method": "POST",
+      "path": "/send"
+    }
+  },
   "flow": {
     "triggers": [
       {

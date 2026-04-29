@@ -8,5 +8,24 @@
         "email": "Email address",
         "ip": "IP address",
         "port": "Port number"
+    },
+    "settings": {
+        "title": "Debug",
+        "subtitle": "Device information",
+        "loadButton": "Retrieve information",
+        "copyButton": "Copy",
+        "copied": "Copied!",
+        "noLinks": "Something went wrong",
+        "unknownLink": "Unknown device",
+        "errorPrefix": "Error: ",
+        "devices1": "Successfully loaded data from",
+        "devices2": "device(s)",
+        "send": "Send",
+        "community": "Homey Community Forum username",
+        "messagelabel": "Message",
+        "message": "If you have any other information that you think might be useful for the developer, enter it here",
+        "cancel": "Cancel",
+        "sent": "Your configuration has been sent! You can mention the ID below on the forum, only the developer can use it to view your configuration",
+        "sending": "Sending"
     }
 }

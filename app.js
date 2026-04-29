@@ -145,7 +145,7 @@ module.exports = class OmadaApp extends Homey.App {
     this._cid = null;
   }
 
-    async _poll() {
+  async _poll() {
     if (this._devices.size === 0) return;
     if (!await this._ensureSession()) return;
 
