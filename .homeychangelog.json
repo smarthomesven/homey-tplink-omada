@@ -46,5 +46,8 @@
   },
   "1.0.15": {
     "en": "Fixed wireless type detection"
+  },
+  "1.0.16": {
+    "en": "Added debug page"
   }
 }
