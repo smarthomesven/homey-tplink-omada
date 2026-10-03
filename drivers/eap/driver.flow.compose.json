@@ -1,0 +1,18 @@
+{
+    "triggers": [
+        {
+            "id": "cpu_usage_changed",
+            "title": {
+                "en": "CPU usage changed",
+                "nl": "CPU-gebruik veranderd"
+            }
+        },
+        {
+            "id": "ram_usage_changed",
+            "title": {
+                "en": "RAM usage changed",
+                "nl": "RAM-gebruik veranderd"
+            }
+        }
+    ]
+}

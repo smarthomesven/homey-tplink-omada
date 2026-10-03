@@ -9,42 +9,44 @@ module.exports = class ClientDevice extends Homey.Device {
    */
   async onInit() {
     this.log('Client device has been initialized');
-    const wireless = this.getData().wireless;
-    if (wireless !== undefined) {
-      this.setStoreValue('wireless', wireless);
-    }
-    if (this.getStoreValue('wireless') === undefined) {
-      this.setStoreValue('wireless', true);
-    }
-    if (this.hasCapability('measure_signal_strength')) {
-      if (this.getStoreValue('wireless') === false) {
-        this.log('Adding missing capability: measure_signal_strength');
-        await this.removeCapability('measure_signal_strength');
+    // migrations
+      const wireless = this.getData().wireless;
+      if (wireless !== undefined) {
+        this.setStoreValue('wireless', wireless);
       }
-    } else {
-      if (this.getStoreValue('wireless') === true) {
-        this.log('Adding missing capability: measure_signal_strength');
-        await this.addCapability('measure_signal_strength');
+      if (this.getStoreValue('wireless') === undefined) {
+        this.setStoreValue('wireless', true);
       }
-    }
-    if (!this.hasCapability('reconnect')) {
-      this.log('Adding missing capability: reconnect');
-      await this.addCapability('reconnect');
-    }
-    if (!this.hasCapability('block')) {
-      this.log('Adding missing capability: block');
-      await this.addCapability('block');
-    }
-    this._wireless = this.getStoreValue('wireless');
-    if (this.hasCapability('reconnect') && this._wireless === false) {
-      await this.removeCapability('reconnect');
-    }
-    if (this.hasCapability('reconnect')) {
-      this.registerCapabilityListener('reconnect', async (value) => {
-        this.log('Reconnect capability triggered, requesting client data refresh');
-        await this.homey.app.reconnectClient(this);
-      });
-    }
+      if (this.hasCapability('measure_signal_strength')) {
+        if (this.getStoreValue('wireless') === false) {
+          this.log('Adding missing capability: measure_signal_strength');
+          await this.removeCapability('measure_signal_strength');
+        }
+      } else {
+        if (this.getStoreValue('wireless') === true) {
+          this.log('Adding missing capability: measure_signal_strength');
+          await this.addCapability('measure_signal_strength');
+        }
+      }
+      if (!this.hasCapability('reconnect')) {
+        this.log('Adding missing capability: reconnect');
+        await this.addCapability('reconnect');
+      }
+      if (!this.hasCapability('block')) {
+        this.log('Adding missing capability: block');
+        await this.addCapability('block');
+      }
+      this._wireless = this.getStoreValue('wireless');
+      if (this.hasCapability('reconnect') && this._wireless === false) {
+        await this.removeCapability('reconnect');
+      }
+      if (this.hasCapability('reconnect')) {
+        this.registerCapabilityListener('reconnect', async (value) => {
+          this.log('Reconnect capability triggered, requesting client data refresh');
+          await this.homey.app.reconnectClient(this);
+        });
+      }
+    // end migrations
     this.registerCapabilityListener('block', async (value) => {
       this.log('Block capability triggered, requesting client block/unblock');
       const siteId = this.getData().siteId;

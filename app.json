@@ -46,6 +46,22 @@
   "flow": {
     "triggers": [
       {
+        "title": {
+          "en": "IP address changed",
+          "nl": "IP-adres veranderd"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": {
+              "driver_id": "eap|client"
+            }
+          }
+        ],
+        "id": "ip_address_changed"
+      },
+      {
         "id": "device_disconnected",
         "title": {
           "en": "Disconnected",
@@ -74,16 +90,30 @@
         ]
       },
       {
-        "id": "ip_address_changed",
+        "id": "cpu_usage_changed",
         "title": {
-          "en": "IP address changed",
-          "nl": "IP-adres veranderd"
+          "en": "CPU usage changed",
+          "nl": "CPU-gebruik veranderd"
         },
         "args": [
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=client"
+            "filter": "driver_id=eap"
+          }
+        ]
+      },
+      {
+        "id": "ram_usage_changed",
+        "title": {
+          "en": "RAM usage changed",
+          "nl": "RAM-gebruik veranderd"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=eap"
           }
         ]
       }
@@ -192,6 +222,48 @@
         }
       ],
       "id": "client"
+    },
+    {
+      "name": {
+        "en": "EAP"
+      },
+      "class": "other",
+      "capabilities": [
+        "cpu_usage",
+        "ram_usage",
+        "ip_address"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/eap/assets/images/small.png",
+        "large": "/drivers/eap/assets/images/large.png",
+        "xlarge": "/drivers/eap/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "login"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "singular": false
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "eap"
     }
   ],
   "capabilities": {
@@ -218,6 +290,19 @@
       "uiQuickAction": false,
       "icon": "/assets/block.svg"
     },
+    "cpu_usage": {
+      "type": "number",
+      "title": {
+        "en": "CPU Usage"
+      },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "%"
+      },
+      "icon": "/assets/cpu_usage.svg"
+    },
     "ip_address": {
       "type": "string",
       "title": {
@@ -228,6 +313,19 @@
       "getable": true,
       "setable": false,
       "icon": "/assets/ip.svg"
+    },
+    "ram_usage": {
+      "type": "number",
+      "title": {
+        "en": "RAM Usage"
+      },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "%"
+      },
+      "icon": "/assets/ram_usage.svg"
     },
     "reconnect": {
       "type": "boolean",

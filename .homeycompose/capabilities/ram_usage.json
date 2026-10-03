@@ -1,0 +1,9 @@
+{
+  "type": "number",
+  "title": { "en": "RAM Usage" },
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "units": { "en": "%" },
+  "icon": "/assets/ram_usage.svg"
+}

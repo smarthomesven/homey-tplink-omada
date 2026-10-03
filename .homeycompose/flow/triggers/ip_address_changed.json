@@ -1,0 +1,15 @@
+{
+    "title": {
+        "en": "IP address changed",
+        "nl": "IP-adres veranderd"
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": {
+                "driver_id": "eap|client"
+            }
+        }
+   ]
+}

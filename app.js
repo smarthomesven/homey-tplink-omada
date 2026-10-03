@@ -150,6 +150,7 @@ module.exports = class OmadaApp extends Homey.App {
     if (!await this._ensureSession()) return;
 
     try {
+      this.log('Polling started');
       // Collect all unique siteIds needed by registered devices
       const siteIds = new Set(
         [...this._devices.values()].map(d => d.getSiteId())
@@ -157,9 +158,11 @@ module.exports = class OmadaApp extends Homey.App {
 
       // Build mac -> client map from one pass per site
       const clientMap = new Map(); // mac -> client object (or absent = disconnected)
+      const deviceMap = new Map(); // mac -> device/AP object (or absent = offline)
 
       for (const siteId of siteIds) {
-        const res = await this._client.post(`/openapi/v2/${this._cid}/sites/${siteId}/clients`, {
+        // --- Clients ---
+        const clientRes = await this._client.post(`/openapi/v2/${this._cid}/sites/${siteId}/clients`, {
           page: 1,
           pageSize: 500,
           scope: 1,
@@ -176,17 +179,49 @@ module.exports = class OmadaApp extends Homey.App {
           },
         });
 
-        if (res.status === 200 && Array.isArray(res.data?.result?.data)) {
-          for (const client of res.data.result.data) {
+        if (clientRes.status === 200 && Array.isArray(clientRes.data?.result?.data)) {
+          for (const client of clientRes.data.result.data) {
             clientMap.set(client.mac, client);
+          }
+        }
+
+        // --- Devices (APs / switches / routers) ---
+        const deviceRes = await this._client.get(
+          `/${this._cid}/api/v2/sites/${siteId}/grid/devices`,
+          {
+            params: {
+              currentPage: 1,
+              currentPageSize: 50,
+              asyncColumns: 'client',
+            },
+            headers: {
+              'Csrf-Token': this._csrfToken,
+              'X-Requested-With': 'XMLHttpRequest',
+            },
+          }
+        );
+
+        if (deviceRes.status === 200 && Array.isArray(deviceRes.data?.result?.data)) {
+          for (const device of deviceRes.data.result.data) {
+            deviceMap.set(device.mac, device);
           }
         }
       }
 
-      // Dispatch to each device
+      // Dispatch to each registered client device
       for (const [mac, device] of this._devices) {
-        device.onClientData(clientMap.get(mac) ?? null);
+        if (typeof device.onClientData === 'function') {
+          device.onClientData(clientMap.get(mac) ?? null);
+        }
       }
+
+      // Dispatch device (AP/switch) status separately, if the device instance supports it
+      for (const [mac, device] of this._devices) {
+        if (typeof device.onDeviceData === 'function') {
+          device.onDeviceData(deviceMap.get(mac) ?? null);
+        }
+      }
+      this.log('Polling finished');
     } catch (err) {
       this.error('Poll failed:', err.message);
       if (

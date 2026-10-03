@@ -1,0 +1,9 @@
+{
+  "type": "number",
+  "title": { "en": "CPU Usage" },
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "units": { "en": "%" },
+  "icon": "/assets/cpu_usage.svg"
+}

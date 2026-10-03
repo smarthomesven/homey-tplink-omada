@@ -4,45 +4,13 @@ const Homey = require('homey');
 const axios = require('axios');
 const https = require('https');
 
-module.exports = class ClientDriver extends Homey.Driver {
+module.exports = class EAPDriver extends Homey.Driver {
 
   /**
    * onInit is called when the driver is initialized.
    */
   async onInit() {
-    this.log('ClientDriver has been initialized');
-    const reconnectFlowCard = this.homey.flow.getActionCard('reconnect');
-    const blockFlowCard = this.homey.flow.getActionCard('block');
-    const unblockFlowCard = this.homey.flow.getActionCard('unblock');
-    reconnectFlowCard.registerRunListener(async (args, state) => {
-      const device = args.device;
-      this.log('Reconnect flow card triggered for client', device.getData().mac);
-      await this.homey.app.reconnectClient(device);
-    });
-    blockFlowCard.registerRunListener(async (args, state) => {
-      const device = args.device;
-      this.log('Block flow card triggered for client', device.getData().mac);
-      const siteId = device.getData().siteId;
-      const mac = device.getData().mac;
-      try {
-        await this.homey.app.toggleBlockClient(siteId, mac, true);
-        this.log(`Client ${mac} has been blocked via flow`);
-      } catch (err) {
-        this.error(`Failed to block client ${mac} via flow:`, err.message);
-      }
-    });
-    unblockFlowCard.registerRunListener(async (args, state) => {
-      const device = args.device;
-      this.log('Unblock flow card triggered for client', device.getData().mac);
-      const siteId = device.getData().siteId;
-      const mac = device.getData().mac;
-      try {
-        await this.homey.app.toggleBlockClient(siteId, mac, false);
-        this.log(`Client ${mac} has been unblocked via flow`);
-      } catch (err) {
-        this.error(`Failed to unblock client ${mac} via flow:`, err.message);
-      }
-    });
+    this.log('EAP driver has been initialized');
   }
 
   async onPair(session) {
@@ -130,45 +98,29 @@ module.exports = class ClientDriver extends Homey.Driver {
 
     session.setHandler("list_devices", async (data) => {
       try {
-        this.log('List devices triggered');
         const devices = [];
         if (this._client && this._csrfToken) {
-          this.log('Listing devices');
           const response = await this._client.get(`/${this._cid}/api/v2/user/sites?currentPage=1&currentPageSize=100&filters.needFavorite=true`, {
             headers: {
               'Csrf-Token': this._csrfToken,
             },
           });
-          this.log("Data:", response.data);
           if (response.status === 200 && response.data.result && Array.isArray(response.data.result.data)) {
             for (const site of response.data.result.data) {
-              this.log('Listing clients for site', site.id);
-              const clientsResponse = await this._client.post(`/openapi/v2/${this._cid}/sites/${site.id}/clients`, {
-                page: 1,
-                pageSize: 500,
-                scope: 1,
-                sorts: {},
-                hideHealthUnsupported: true,
-                filters: {
-                  active: true,
-                },
-              }, {
+              const clientsResponse = await this._client.get(`/${this._cid}/api/v2/sites/${site.id}/grid/devices?currentPage=1&currentPageSize=50&asyncColumns=client`, {
                 headers: {
                   'Csrf-Token': this._csrfToken,
-                  'Omada-Request-Source': 'web-local',
                   'X-Requested-With': 'XMLHttpRequest',
                 },
               });
-              this.log("Data:", clientsResponse.data);
               if (clientsResponse.status === 200 && clientsResponse.data.result && Array.isArray(clientsResponse.data.result.data)) {
-                const activeClients = clientsResponse.data.result.data;
+                const activeClients = clientsResponse.data.result.data.filter(client => client.type === "ap");
                 for (const client of activeClients) {
                   devices.push({
-                    name: `${client.name} (${client.mac})`,
+                    name: client.name,
                     data: {
                       mac: client.mac,
                       siteId: site.id,
-                      wireless: client.wireless,
                     },
                   });
                 }
@@ -195,7 +147,6 @@ module.exports = class ClientDriver extends Homey.Driver {
         this._client = null;
         this._sessionCookie = null;
         this._csrfToken = null;
-        this.error('List devices failed:', error.message);
         return [];
       }
     });
