@@ -3,6 +3,7 @@
 const Homey = require('homey');
 const axios = require('axios');
 const https = require('https');
+const HomeyPush = require('./lib/push');
 const POLL_INTERVAL_MS = 10000;
 
 
@@ -13,25 +14,8 @@ module.exports = class OmadaApp extends Homey.App {
    */
   async onInit() {
     this.log('OmadaApp has been initialized');
-    // generate ID, random UUID
-    try {
-      const { randomUUID } = require('crypto');
-      let id = this.homey.settings.get('id');
-      if (!id) {
-        id = randomUUID();
-        this.homey.settings.set('id', id);
-      }
-      await axios.post('https://homey-apps-telemetry.vercel.app/api/installations', {
-        id: id,
-        appId: "com.omadanetworks",
-        homeyPlatform: this.homey.platformVersion ? this.homey.platformVersion : 1,
-        appVersion: this.manifest.version,
-      }).catch(error => {
-        this.error('Error sending telemetry data:', error.message);
-      });
-    } catch (error) {
-      this.error('Error in onInit:', error.message);
-    }
+    this.push = new HomeyPush(this);
+    await this.push.startPush();
     this._devices = new Map(); // mac -> device instance
     this._client = null;
     this._sessionCookie = null;
@@ -232,6 +216,11 @@ module.exports = class OmadaApp extends Homey.App {
         this.log('Session expired, will re-authenticate on next poll');
         this._invalidateSession();
       }
+    }
+  }
+  async onUninit() {
+    if (this.push) {
+      await this.push.stopPush();
     }
   }
 
